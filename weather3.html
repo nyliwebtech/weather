@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Weather</title>
+        <link href="css/reset.css" rel="stylesheet" type="text/css" >
+        <link href="https://fonts.googleapis.com/css?family=VT323" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
+        <style>
+
+                body, html {
+                    height:100%;
+                    font-family:"VT323";
+                }
+
+                #container {
+                    position: absolute;
+                    min-height: 100%;
+                    width: 100%;
+                    height: 100%;
+                    background:#e9f0f6;
+                }
+
+                .todo {
+                    padding:50px;
+                }
+
+                .locform {
+                    display:flex;
+                    margin:0 auto;
+                    margin-top:100px;
+                    position:relative;
+                    min-width:400px;
+                    width:30%;
+                }
+
+                .locform input[type="text"] {
+                    font-family:"VT323";
+                    font-size:28px;
+                    padding:10px 20px;
+                    border:0px;
+                    border-radius:60px;
+                    box-sizing:border-box;
+                    width:100%;
+                    padding-right:80px;
+                    color:#0c4844;
+                    text-shadow:2px 2px 1px rgba(192,223,255,1);
+                }
+
+                .locform input[type="text"]::placeholder {
+                    color:#d0deea;
+                    text-shadow:none;
+                }
+
+                .locform input[type="submit"] {
+                    width:33px;
+                    height:33px;
+                    font-family:"VT323";
+                    color:#fff;
+                    border:0px; border-radius:50px;
+                    font-size:16px;
+                    position:absolute;
+                    text-transform:uppercase;
+                    right:8px;
+                    background:#bfd0e2;
+                    top:8px;
+                    cursor:pointer;
+                }
+
+                h5#locdisplay {
+                    font-weight:normal;
+                    text-align:center;
+                    margin-top:15px;
+                    color:#7394b7;
+                }
+
+                #forecast {
+                    margin-top:50px;
+                    display:flex;
+                    align-items:stretch;
+                    justify-content:center;
+                    flex-wrap:wrap;
+                    z-index:10;
+                    position:relative;
+                }
+
+                #forecast li {
+                    margin:5px;
+                    padding:8px;
+                    background:#fff;
+                    box-sizing:border-box;
+                    width:100px;
+                    border-radius:3px;
+                    box-shadow:3px 3px 0px rgba(191,208,226,.6);
+                    cursor:pointer;
+                    position:relative;
+                    display:flex;
+                    flex-direction:column;
+                    align-items:center;
+                    color:#0c4844;
+                    justify-content:start;
+                    text-shadow:1px 1px 0px rgba(192,223,255,1);
+                }
+
+                #forecast li h3 {
+                    font-size:30px;
+                    font-weight:Normal;
+                    text-shadow:2px 2px 1px rgba(192,223,255,1);
+                    margin-bottom:5px;
+                }
+
+                #forecast li h3 span {
+                    font-size:22px;
+                    text-shadow:none;
+                    color:#bfd0e2;
+                }
+
+                #forecast .details {
+                    position:absolute;
+                    background:#bfd0e2;
+                    width:400px;
+                    bottom:0px;
+                    left:0px;
+                    margin-bottom:-50px;
+                    visibility:hidden;
+                    text-shadow:1px 1px 0px rgba(192,223,255,1);
+                    padding:20px;
+                    color:#5c0c43;
+                    border-radius:3px;
+                    box-sizing:border-box;
+                    opacity:0;
+                    font-size:22px;
+                    box-shadow:8px 6px 0px rgba(191,208,226,.2);
+                    transition:0.3s all;
+
+                }
+
+                #forecast .details.details-night {
+                    bottom:auto;
+                    margin-top:0px;
+                    color:#c9daec;
+                    text-shadow:1px 1px 0px rgb(0,0,0,1);
+                    background:#4c5157;
+                }
+
+                #forecast li:nth-child(n+5) .details {
+                    right:0px;
+                    left:auto;
+                }
+
+                #forecast .details:after {
+                    content: 'arrow_drop_down';
+                    font-family: "Material Icons";
+                    font-size: 48px;
+                    line-height:24px;
+                    color: #bfd0e2;
+                    position: absolute;
+                    bottom: -16px;
+                    left:10px;
+                    text-shadow:8px 6px 0px rgba(191,208,226,.2);
+                }
+
+                #forecast .details.details-night:after {
+                    top:-16px;
+                    content:"arrow_drop_up";
+                    color:#4c5157;
+                    text-shadow:none;
+                }
+
+                #forecast li:nth-child(n+5) .details:after {
+                    right:10px;
+                    left:auto;
+                }
+
+                #forecast li:hover .details {
+                    visibility:visible;
+                    opacity:1;
+                    margin-bottom:35px;
+                    transition:0.3s all;
+                }
+
+                #forecast li:hover .details.details-night {
+                    margin-top:30px;
+                    margin-bottom:0px;
+                }
+
+                #forecast li.night {display:none;}
+
+                #landscape {
+                    background:url('icons/bg_grass.png') bottom center no-repeat;
+                    width:400px;
+                    height:90px;
+                    position:relative;
+                    margin:0 auto;
+                    margin-top:30px;
+                    z-index:5;
+                }
+                .man {
+                    position:absolute;
+                    bottom:0px;
+                    left:215px;
+                    width:36px;
+                    height:64px;
+                    background:url('icons/man.png') no-repeat;
+                }
+
+                #forecast li span.weathericon {
+                    display:block;
+                    width:64px;
+                    height:64px;
+                    margin-bottom:5px;
+                    background-repeat:no-repeat;
+                    background-position:64px 64px;
+                    background-image:url('icons/sprite_weather.png');
+                }
+
+
+
+                .icon_sct_night {background:url('icons/night.png');}
+                .icon_bkn_day {
+                    animation: wea_bkn 1.2s steps(2) infinite;
+                }
+                .icon_skc_day,.icon_sct_day,.icon_few_day {
+                    animation: wea_sun 1.4s steps(2) infinite;
+                }
+                .icon_ovc_day {
+                    animation: wea_clouds 1.4s steps(2) infinite;
+                }
+                .icon_snow_day, .icon_snow_fzra_day, .icon_snow_night {
+                    animation: wea_snow 0.7s steps(2) infinite;
+                }
+                .icon_blizzard_day {
+                    animation: wea_snow 0.2s steps(2) infinite;
+                }
+                .icon_sleet_day, .icon_rain_fzra_day {
+                    animation: wea_sleet 1.4s steps(2) infinite;
+                }
+                .icon_fog_day {
+                    animation: wea_fog 2.8s steps(2) infinite;
+                }
+                .icon_tsra_day, .icon_tsra_hi_day {
+                    animation: wea_thunder 2s steps(2) infinite;
+                }
+                .icon_cold_day {
+                    animation: wea_freeze 2s steps(2) infinite;
+                }
+                .icon_rain_day, .icon_rain_showers_day {
+                    animation: wea_rain 1.4s steps(2) infinite;
+                }
+
+                @keyframes wea_snow {
+                    from {
+                        background-position:-1px -1px;
+                    }
+                    to {
+                        background-position:-1px -131px;
+                    }
+                }
+                @keyframes wea_clouds {
+                    from {
+                        background-position:-66px -1px;
+                    }
+                    to {
+                        background-position:-66px -131px;
+                    }
+                }
+                @keyframes wea_bkn {
+                    from {
+                        background-position:-131px -1px;
+                    }
+                    to {
+                        background-position:-131px -130px;
+                    }
+                }
+                @keyframes wea_sun {
+                    from {
+                        background-position:-196px -1px;
+                    }
+                    to {
+                        background-position:-196px -130px;
+                    }
+                }
+                @keyframes wea_freeze {
+                    from {
+                        background-position:-196px -131px;
+                    }
+                    to {
+                        background-position:-196px -260px;
+                    }
+                }
+                @keyframes wea_sleet {
+                    from {
+                        background-position:-1px -131px;
+                    }
+                    to {
+                        background-position:-1px -260px;
+                    }
+                }
+                @keyframes wea_rain {
+                    from {
+                        background-position:-66px -131px;
+                    }
+                    to {
+                        background-position:-66px -260px;
+                    }
+                }
+                @keyframes wea_thunder {
+                    from {
+                        background-position:-131px -131px;
+                    }
+                    to {
+                        background-position:-131px -260px;
+                    }
+                }
+                @keyframes wea_fog {
+                    from {
+                        background-position:-1px -261px;
+                    }
+                    to {
+                        background-position:-1px -390px;
+                    }
+                }
+
+            </style>
+
+    </head>
+    <body>
+
+            <div id="container">
+                <form class="locform">
+                    <input type="text" name="location" placeholder="location"><input type="submit" value="Go">
+                </form>
+                <h5 id="locdisplay">Clarks Summit, Lackawanna County, Pennsylvania, 18411, USA</h5>
+                <ul id="forecast">
+
+                </ul>
+
+                <div id="landscape">
+                    <div class="man"></div>
+                </div>
+
+                <div class="todo">
+
+                    <ul>
+                        <li>Figure out best design for night / descriptions (night temp is fine, but need desc/icons?)</li>
+                        <li>Little pixel graphic that arranges season</li>
+                        <li>Use Dates / date range instead of / in addition to days</li>
+                        <li>Loading graphic?</li>
+                        <li>use localstorage/cookie to set default location, or allow google to find current loc</li>
+                    </ul>
+
+                </div>
+            </div>
+
+        <script>
+
+            function loadWeather(forecastURL) {
+
+                let forecastList = document.getElementById("forecast");
+
+                //clear out forecast
+                forecastList.innerHTML = "";
+
+                //fetch("https://api.weather.gov/gridpoints/BGM/77,31/forecast")
+                fetch(forecastURL)
+                .then(function(response) {
+                    if(response.ok) {
+                    return response.json();
+                } else {
+                    return response.json().then(function(err){
+                        throw new Error(err.message);
+                    });
+                }
+                }).then(function(data){
+                        console.log(data);
+
+
+                        for(obj of data.properties.periods) {
+
+                            if(obj.isDaytime) {
+
+                                console.log(setClassIcon(obj.icon));
+
+                                // console.log("daytime temp:" + obj.temperature);
+                                // if(data.properties.periods[obj.number]) {
+                                //     console.log("nighttime temp:" + data.properties.periods[obj.number].temperature);
+                                // }
+
+
+                                let li = document.createElement("li");
+
+                                if(data.properties.periods[obj.number]) {
+
+                                li.innerHTML = `
+                                        <span class="weathericon ${setClassIcon(obj.icon)}"></span>
+                                        <h3>${obj.temperature}&deg;<span> ${data.properties.periods[obj.number].temperature}&deg;</span></h3>
+                                        <p>${obj.name}</p>
+                                        <div class="details details-day">${obj.detailedForecast}</div>
+                                        <div class="details details-night">${data.properties.periods[obj.number].detailedForecast}</div>
+                                    `;
+                                } else {
+                                    li.innerHTML = `
+                                        <span class="weathericon ${setClassIcon(obj.icon)}"></span>
+                                        <h3>${obj.temperature}&deg;</h3>
+                                        <p>${obj.name}</p>
+                                        <div class="details details-day">${obj.detailedForecast}</div>
+                                    `;
+                                }
+
+                                forecastList.appendChild(li);
+
+                                li.querySelector('.details-day').style.bottom = li.offsetHeight + "px";
+                                li.querySelector('.details-night').style.top = li.offsetHeight + "px";
+
+                            }
+
+
+
+                        }
+
+
+                }).catch(function(error){
+
+                });
+            }
+
+            //get the lat/lng of the search query, then get the gridpoints from weather api
+            async function grabLatLng(query) {
+                var response = await fetch("https://nominatim.openstreetmap.org/search/"+query+"?format=json&limit=1&countrycodes=US")
+                var json = await response.json();
+
+                    console.log(json);
+
+                    //should be returned for use later
+                    document.getElementById('locdisplay').innerHTML = json[0].display_name;
+
+                    let lat = json[0].lat;
+                    let lng = json[0].lon;
+
+                    //gridpoints from weather.gov api
+                    var grid = await fetch("https://api.weather.gov/points/"+lat+","+lng);
+                    var gridjson = await grid.json();
+
+                    let forecastURL = gridjson.properties.forecast;
+
+                    return forecastURL;
+            }
+
+
+            //figure out what icon we should use
+            function setClassIcon(iconurl) {
+                    icon = iconurl.replace("https://api.weather.gov/icons/land/","");
+                    icon = icon.split(",")[0];
+                    icon = icon.split("?")[0];
+                    time = icon.split("/")[0];
+                    weather = icon.split("/")[1];
+                    return "icon_"+weather+"_"+time;
+                }
+
+
+            //on form submit, grabLatLng
+            document.querySelector('.locform').addEventListener('submit',function(e){
+                e.preventDefault();
+                term = this.querySelector('input[name=location]').value;
+
+                grabLatLng(term).then(function(data) {
+                    //load weather based on new location
+                    loadWeather(data);
+                })
+
+            });
+
+            //set default location, load initial weather
+            loadWeather("https://api.weather.gov/gridpoints/BGM/77,31/forecast");
+
+
+
+            function timetodeg(time) {
+                currTime = new Date(Date.now());
+
+                //real calc should be 180 / (sunset - sunrise)
+                deg = currTime.getHours() * 15;
+                return deg;
+
+            }
+
+            console.log(timetodeg());
+        </script>
+    </body>
+</html>
